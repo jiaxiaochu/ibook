@@ -1,0 +1,224 @@
+---
+title: 安装Ubuntu后要做的事
+date: 2018-06-22 01:02:42
+tags:  [环境配置,Python解释器的安装与配置]
+categories: 『环境配置』- 工欲善其事，必先利其器
+toc: true
+<!-- thumbnail: https://ws1.sinaimg.cn/large/0065l1jqly1g57yxi0h7hj30dw08vq2v.jpg -->
+---
+
+### Ubuntu 16.04安装完成后，还需要做一些配置才能愉快的使用，所以装完系统后还要进行一系列的优化。
+
+### 1.删除libreoffice
+
+libreoffice虽然是开源的，但是Java写出来的office执行效率实在不敢恭维，装完系统后果断删掉
+
+`sudo apt-get remove libreoffice-common`
+<!-- more -->
+### 2.删除Amazon的链接
+
+`sudo apt-get remove unity-webapps-common`
+
+### 3.删掉基本不用的自带软件（用的时候再装也来得及）
+```
+sudo apt-get remove thunderbird totem rhythmbox empathy brasero simple-scan gnome-mahjongg aisleriot gnome-mines cheese transmission-common gnome-orca webbrowser-app gnome-sudoku  landscape-client-ui-install
+
+sudo apt-get remove onboard deja-dup
+```
+这样系统就基本上干净了。
+
+### 4.安装Vim
+
+居然默认没有集成Vim神器，只能手动安装了。
+
+`sudo apt-get install vim`
+
+### 5.设置时间使用UTC
+
+`sudo vim /etc/default/rcS`
+
+将UTC=no改为UTC=yes
+
+### 6.安装Chrome
+
+通过直接下载安装Google Chrome浏览器deb包。
+
+打开Ubuntu终端，以下为32位版本，使用下面的命令。
+
+`wget https://dl.google.com/linux/direct/google-chrome-stable_current_i386.deb`
+
+以下为64位版本，使用下面的命令。
+
+`wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb`
+
+下载好后
+
+——————————
+
+32 位安装命令:
+
+`sudo dpkg -i google-chrome-stable_current_i386.deb`
+
+64 位安装命令:
+
+`sudo dpkg -i google-chrome-stable_current_amd64.deb`
+
+——————————
+
+添加 Google Chrome 的PPA
+
+安装Google Chrome浏览器官方PPA，打开终端然后运行下面的命令，下载签名密钥：
+
+`wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add`
+
+然后
+```
+sudo sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+
+sudo apt-get update
+
+sudo apt-get install google-chrome
+```
+————————————————
+
+安装Google Chrome unstable 版本：
+
+`sudo apt-get install google-chrome-beta`
+
+————————————————
+
+安装Google Chrome beta 版本：
+
+`sudo apt-get install google-chrome-unstable`
+
+
+
+### 7.安装搜狗输入法
+```
+vim /etc/apt/sources.list.d/ubuntukylin.list文件，加入ubuntu kylin的apt源
+
+deb http://archive.ubuntukylin.com:10006/ubuntukylin trusty main
+
+然后
+
+sudo apt-get update
+
+sudo apt-get install sogoupinyin
+```
+这样就可以apt安装和更新搜狗输入法了。
+
+其实Ubuntu16.04自带的中文输入法挺好用的，特别对于需要经常输入拉丁字符、希腊字符的朋友。不过由于用户习惯，Sougou拼音还是需要安装的
+
+### 8.安装WPS Office
+
+MS一直未出Linux版的Office，只能凑合着用WPS了
+
+`sudo apt-get install wps-office`
+
+### 9.安装Oracle Java
+```
+sudo add-apt-repository ppa:webupd8team/java
+
+sudo apt-get update
+
+sudo apt-get install oracle-java8-installer
+```
+由于系统自带的是OpenJDK，卸载OpenJDK之后会带有残留，导致运行
+
+java -version
+
+时第一行不是java的版本号，会是Picked up JAVA_TOOL_OPTIONS: -javaagent:/usr/share/java/jayatanaag.jar这个提示，导致很多检测java版本号的脚本会运行出错，因此需要手动清除残留。
+
+`sudo rm /usr/share/upstart/sessions/jayatana.conf`
+
+删除/usr/share/upstart/sessions/jayatana.conf文件，重启之后再运行java -version就不会再有Picked
+
+up JAVA_TOOL_OPTIONS: -javaagent:/usr/share/java/jayatanaag.jar提示了。
+
+### 10.安装Sublime Text 3
+```
+sudo add-apt-repository ppa:webupd8team/sublime-text-3
+
+sudo apt-get update
+
+sudo apt-get install sublime-text
+```
+### 11.安装经典菜单指示器
+```
+sudo add-apt-repository ppa:diesch/testing
+
+sudo apt-get update
+
+sudo apt-get install classicmenu-indicator
+```
+### 12.安装系统指示器SysPeek
+```
+sudo add-apt-repository ppa:nilarimogard/webupd8
+
+sudo apt-get update
+
+sudo apt-get install syspeek
+```
+### 13.自定义DHCP网络的DNS Server IP地址
+```
+sudo vim /etc/dhcp/dhclient.conf文件，在第21行#prepend domain-name-servers 127.0.0.1;下一行添加如下2行使用aliyun和114的DNS
+
+prepend domain-name-servers 114.114.114.114;
+
+prepend domain-name-servers 223.5.5.5;
+```
+这样可以优先使用aliyun的dns，次要使用114的DNS。
+
+### 14.安装git和vpnc
+
+git和vpn大家都懂的，程序员的好工具。
+
+`sudo apt-get install vpnc git`
+
+### 15.安装axel
+
+axel是Linux命令行界面的多线程下载工具，比wget的好处就是可以指定多个线程同时在命令行终端里下载文件。
+
+`sudo apt-get install axel`
+
+安装之后，就可以代替wget用多线程下载了。
+
+### 16.安装openssh-server
+
+`sudo apt-get install openssh-server`
+
+安装之后，就可以在Win下用ssh工具远程登陆了，当然也多了一个安全隐患，如果不想远程登陆本机的话，可以不装openssh-server。
+
+### 17.安装CMake和Qt Creator
+
+CMake和Qt Creator是Linux下开发C++程序的神器，Ubuntu 17.10已经集成了最新版的Qt Creator （4.4.1）。
+
+`sudo apt-get install cmake qtcreator`
+
+### 18.安装ExFat文件系统驱动
+
+Ubuntu默认不支持exFat文件系统的挂载，需要手动安装exfat的支持
+
+`sudo apt-get install exfat-fuse`
+
+装上exfat-fuse之后就可以挂载exfat分区的磁盘了。
+
+### 19.安装lnav
+
+lnav工具是在终端界面看日志的神器
+
+`sudo apt-get install lnav`
+
+装上之后在终端里就可以用lnav彩色显示日志了。
+
+### 20.安装unrar
+
+系统默认不带解压缩rar文件的功能，手动安装unrar程序
+
+`sudo apt-get install unrar`
+
+装上之后就可以用命令解压缩rar文件了。
+
+使用如下命令解压缩文件到当前目录。
+
+`unrar x test.rar`
